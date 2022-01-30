@@ -1,10 +1,8 @@
 Config = {}
-Config.Locale = 'en'
 
 Config.HealingTimer = 240 -- Time in seconds
 Config.ReceptionPos = vector3(312.41757202148,-592.8876953125,43.284122467041)
 Config.Price = 3500
-Config.Society = "society_ambulance"
 
 
 Config.Beds = {

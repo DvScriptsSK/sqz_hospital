@@ -1,4 +1,3 @@
-ESX = nil
 local isOnBed = false
 local timer = 0
 local doctorPed
@@ -6,20 +5,16 @@ local currentBedCoords
 local hasLeft = true
 local shouldDrawMarker = false
 local markerCoords
+local QBCore = exports['qb-core']:GetCoreObject()
 
-Citizen.CreateThread(function()
-	while ESX == nil do
-		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-		Citizen.Wait(0)
-	end
-end)
+
 
 function GetFreeBed()
     local closestBed = nil
     local found = false
 
     for k, v in pairs(Config.Beds) do
-        local cPlayer, cDist = ESX.Game.GetClosestPlayer(v.Loc)
+        local cPlayer, cDist = QBCore.Functions.GetClosestPlayer(v.Loc)
         if cPlayer == -1 or cDist > 1.5 then
             found = true
             isOnBed = true
@@ -29,7 +24,7 @@ function GetFreeBed()
     end
 
     if not found then
-        ESX.ShowNotification(_U('all_beds_occupied'))
+        TriggerClientEvent('QBCore:Notify', source,'all beds occupied')
         return closestBed
     end
 
@@ -125,7 +120,7 @@ function startTimer()
             SetTextDropShadow()
             SetTextOutline()
             BeginTextCommandDisplayText('STRING')
-            AddTextComponentSubstringPlayerName(timeToDisp(timer).._U('doctor_healing'))
+            AddTextComponentSubstringPlayerName(timeToDisp(timer)..'doctor healing')
             EndTextCommandDisplayText(0.05, 0.55)
 
             DisableAllControlActions(1)
@@ -285,7 +280,7 @@ function StartClipBoardAnim(closestBed)
         Wait(500)
         attempt = attempt + 1
         SetNotificationTextEntry('STRING')
-        AddTextComponentString(_U('go_to_bed_room'))
+        AddTextComponentString('go_to_bed_room')
         DrawNotification(0,1)
     end
     shouldDrawMarker = false

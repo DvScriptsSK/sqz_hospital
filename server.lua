@@ -1,35 +1,24 @@
-ESX = nil
-
-TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-
+local QBCore = exports['qb-core']:GetCoreObject()
+local Player = QBCore.Functions.GetPlayer(source)
 
 RegisterNetEvent('sqz_hospital:PayForHeal')
 AddEventHandler('sqz_hospital:PayForHeal', function()
     local _source = source
-    local xPlayer = ESX.GetPlayerFromId(_source)
+    local xPlayer = QBCore.Functions.GetPlayer(_source)
 
-    if xPlayer.getMoney() >= Config.Price then
-        xPlayer.removeMoney(Config.Price)
-        xPlayer.showNotification(_U('has_paid', Config.Price))
+    if xPlayer.PlayerData.money.cash >= Config.Price then
+        xPlayer.Functions.RemoveMoney('cash',Config.Price)
+        TriggerClientEvent('QBCore:Notify', source, 'You have paid for the healing', Config.Price)
         TriggerClientEvent('sqz_hospital:HasEnoughMoney', _source)
 
-        if Config.Society then
-            TriggerEvent('esx_addonaccount:getSharedAccount', Config.Society, function(account)
-                account.addMoney(Config.Price)
-            end)
-        end
-    elseif xPlayer.getAccount('bank').money >= Config.Price then
-        xPlayer.removeAccountMoney('bank', Config.Price)
-        xPlayer.showNotification(_U('has_paid', Config.Price))
+    elseif Player.PlayerData.money['bank'].money >= Config.Price then
+        xPlayer.Functions.RemoveMoney('bank', Config.Price)
+        TriggerClientEvent('QBCore:Notify', source,'You have paid for the healing ', Config.Price)
         TriggerClientEvent('sqz_hospital:HasEnoughMoney', _source)
 
-        if Config.Society then
-            TriggerEvent('esx_addonaccount:getSharedAccount', Config.Society, function(account)
-                account.addMoney(Config.Price)
-            end)
-        end
+
     else
-        xPlayer.showNotification(_U('no_money'))
+        TriggerClientEvent('QBCore:Notify', source,'You do not have money to pay the service, sorry.')
     end
 end)
 
